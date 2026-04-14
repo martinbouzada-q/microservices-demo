@@ -260,3 +260,39 @@ message Ad {
     // short advertisement text to display.
     string text = 2;
 }
+
+// ----------Favorites service (Wishlist)----------
+
+service FavoritesService {
+    rpc AddFavorite(AddFavoriteRequest) returns (Empty) {}
+    rpc GetFavorites(GetFavoritesRequest) returns (GetFavoritesResponse) {}
+    rpc RemoveFavorite(RemoveFavoriteRequest) returns (Empty) {}
+    rpc ClearFavorites(ClearFavoritesRequest) returns (Empty) {}
+}
+
+message Favorite {
+    string product_id = 1;
+    string added_at = 2;  // RFC3339 timestamp (ISO 8601 format)
+}
+
+message AddFavoriteRequest {
+    string user_id = 1;    // Session ID
+    string product_id = 2;
+}
+
+message GetFavoritesRequest {
+    string user_id = 1;    // Session ID
+}
+
+message GetFavoritesResponse {
+    repeated Favorite favorites = 1;
+}
+
+message RemoveFavoriteRequest {
+    string user_id = 1;    // Session ID
+    string product_id = 2;
+}
+
+message ClearFavoritesRequest {
+    string user_id = 1;    // Session ID
+}

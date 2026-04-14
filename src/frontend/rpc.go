@@ -125,3 +125,21 @@ func (fe *frontendServer) getAd(ctx context.Context, ctxKeys []string) ([]*pb.Ad
 	})
 	return resp.GetAds(), errors.Wrap(err, "failed to get ads")
 }
+
+func (fe *frontendServer) getFavorites(ctx context.Context, userID string) ([]*pb.Favorite, error) {
+	resp, err := pb.NewFavoritesServiceClient(fe.favoritesSvcConn).
+		GetFavorites(ctx, &pb.GetFavoritesRequest{UserId: userID})
+	return resp.GetFavorites(), err
+}
+
+func (fe *frontendServer) addFavorite(ctx context.Context, userID, productID string) error {
+	_, err := pb.NewFavoritesServiceClient(fe.favoritesSvcConn).
+		AddFavorite(ctx, &pb.AddFavoriteRequest{UserId: userID, ProductId: productID})
+	return err
+}
+
+func (fe *frontendServer) removeFavorite(ctx context.Context, userID, productID string) error {
+	_, err := pb.NewFavoritesServiceClient(fe.favoritesSvcConn).
+		RemoveFavorite(ctx, &pb.RemoveFavoriteRequest{UserId: userID, ProductId: productID})
+	return err
+}

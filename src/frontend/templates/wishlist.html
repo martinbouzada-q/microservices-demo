@@ -1,0 +1,99 @@
+<!--
+ Copyright 2026 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+{{ define "wishlist" }}
+    {{ template "header" . }}
+
+    <div {{ with $.platform_css }} class="{{.}}" {{ end }}>
+        <span class="platform-flag">
+            {{$.platform_name}}
+        </span>
+    </div>
+
+    <main role="main" class="wishlist-sections">
+
+        {{ if eq (len $.items) 0 }}
+        <section class="empty-wishlist-section">
+            <h3>Your wishlist is empty!</h3>
+            <p>Items you add to your wishlist will appear here.</p>
+            <a class="cymbal-button-primary" href="{{ $.baseUrl }}/" role="button">Continue Shopping</a>
+        </section>
+        {{ else }}
+        <section class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="row mb-3 py-2">
+                        <div class="col">
+                            <h3>My Wishlist ({{ $.item_count }})</h3>
+                        </div>
+                    </div>
+
+                    {{ range $.items }}
+                    <div class="row wishlist-item-row border-bottom pb-3 mb-3">
+                        <div class="col-md-3">
+                            <a href="{{ $.baseUrl }}/product/{{.Product.Id}}">
+                                <img class="img-fluid" alt="{{.Product.Name}}" src="{{ $.baseUrl }}{{.Product.Picture}}" />
+                            </a>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>{{ .Product.Name }}</h5>
+                                    <p class="text-muted">SKU #{{ .Product.Id }}</p>
+                                </div>
+                                <div class="col-md-4 text-right">
+                                    <p class="h5">{{ renderMoney .Price }}</p>
+                                    <p class="text-muted small">Added {{ .AddedAtTime.Format "Jan 2, 2006" }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <form method="POST" action="{{ $.baseUrl }}/cart/add" class="d-inline">
+                                        <input type="hidden" name="product_id" value="{{.Product.Id}}" />
+                                        <button class="cymbal-button-primary" type="submit">
+                                            Add to Cart
+                                        </button>
+                                    </form>
+
+                                    <form method="POST" action="{{ $.baseUrl }}/wishlist/remove" class="d-inline">
+                                        <input type="hidden" name="product_id" value="{{.Product.Id}}" />
+                                        <button class="cymbal-button-secondary" type="submit">
+                                            Remove from Wishlist
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
+
+                    <div class="row mt-4">
+                        <div class="col">
+                            <a class="cymbal-button-secondary" href="{{ $.baseUrl }}/" role="button">
+                                Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {{ end }}
+
+    </main>
+
+    {{ template "footer" . }}
+{{ end }}
