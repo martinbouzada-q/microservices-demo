@@ -1,0 +1,140 @@
+{
+  "requiresEnvironmentSetup": true,
+  "services": [
+    {
+      "name": "favoritesservice",
+      "type": "gRPC",
+      "port": 50052,
+      "language": "C#",
+      "dependencies": ["redis"],
+      "buildCommand": "dotnet build src/favoritesservice/",
+      "runCommand": "dotnet run --project src/favoritesservice/",
+      "healthCheck": "grpcurl -plaintext localhost:50052 hipstershop.FavoritesService/GetFavorites"
+    },
+    {
+      "name": "frontend",
+      "type": "HTTP",
+      "port": 3000,
+      "language": "Go",
+      "dependencies": ["favoritesservice", "cartservice", "productcatalogservice", "currencyservice"],
+      "environment": {
+        "FAVORITES_SERVICE_ADDR": "localhost:50052",
+        "CART_SERVICE_ADDR": "localhost:7070",
+        "PRODUCT_CATALOG_SERVICE_ADDR": "localhost:3550",
+        "CURRENCY_SERVICE_ADDR": "localhost:7000"
+      }
+    },
+    {
+      "name": "redis",
+      "type": "Cache",
+      "port": 6379,
+      "language": "Redis",
+      "dependencies": [],
+      "docker": "redis:7-alpine"
+    }
+  ],
+  "seedData": {
+    "required": false,
+    "scripts": []
+  },
+  "ports": {
+    "frontend": {
+      "host": 3000,
+      "container": 8080,
+      "description": "Frontend HTTP server"
+    },
+    "favoritesservice": {
+      "host": 50052,
+      "container": 50052,
+      "description": "FavoritesService gRPC"
+    },
+    "cartservice": {
+      "host": 7070,
+      "container": 7070,
+      "description": "CartService gRPC"
+    },
+    "productcatalogservice": {
+      "host": 3550,
+      "container": 3550,
+      "description": "ProductCatalogService gRPC"
+    },
+    "currencyservice": {
+      "host": 7000,
+      "container": 7000,
+      "description": "CurrencyService gRPC"
+    },
+    "redis": {
+      "host": 6379,
+      "container": 6379,
+      "description": "Redis cache"
+    }
+  },
+  "environmentVariables": {
+    "FAVORITES_SERVICE_ADDR": {
+      "value": "localhost:50052",
+      "description": "FavoritesService gRPC address (frontend)",
+      "required": true
+    },
+    "PORT": {
+      "value": "50052",
+      "description": "FavoritesService listening port",
+      "required": true,
+      "service": "favoritesservice"
+    },
+    "REDIS_ADDR": {
+      "value": "redis:6379",
+      "description": "Redis connection string (favoritesservice and cartservice)",
+      "required": true,
+      "service": "favoritesservice"
+    },
+    "ENABLE_TRACING": {
+      "value": "0",
+      "description": "Enable OpenTelemetry tracing",
+      "required": false,
+      "service": "favoritesservice"
+    }
+  },
+  "dockerCompose": {
+    "override": {
+      "version": "3.8",
+      "services": {
+        "favoritesservice": {
+          "build": {
+            "context": ".",
+            "dockerfile": "src/favoritesservice/Dockerfile"
+          },
+          "ports": ["50052:50052"],
+          "environment": {
+            "PORT": "50052",
+            "REDIS_ADDR": "redis:6379",
+            "ENABLE_TRACING": "0"
+          },
+          "depends_on": ["redis"],
+          "networks": ["default"]
+        }
+      }
+    }
+  },
+  "preFlightChecks": [
+    {
+      "name": "Go toolchain",
+      "command": "go version",
+      "minVersion": "1.25"
+    },
+    {
+      "name": "dotnet toolchain",
+      "command": "dotnet --version",
+      "minVersion": "10.0"
+    },
+    {
+      "name": "Redis available",
+      "command": "redis-cli ping",
+      "expectedOutput": "PONG"
+    },
+    {
+      "name": "gRPC tools available",
+      "command": "grpcurl --version",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp:*)",
+      "Bash(curl -s -H 'Authorization: Bearer ATATT3xFfGF0oe-WfezPNzpyUMq3EtgcF75yjf3bxYvheIeqQlw-d_IDz7lPl0k0vaGLfeetnnvdhrMkY-s_Wl7gy9c0vZwJLN1nFdGi1n5_DIh5qMqcjNjLk07WeHRPWHhp2EhBMqj0r6uYf370p7qY109gUbuhDcacCpF8qLa7GB_6-0pWqAE=0F60D339' https://api.atlassian.com/oauth/token/accessible-resources)",
+      "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+      "mcp__claude_ai_Atlassian__getVisibleJiraProjects",
+      "mcp__claude_ai_Atlassian__createJiraIssue",
+      "mcp__claude_ai_Atlassian__editJiraIssue",
+      "Bash(git add:*)",
+      "Bash(git reset:*)",
+      "Bash(git commit:*)",
+      "Bash(ls -la /Users/martin-bouzada/qaf/microservices-demo/src/frontend/wishlist*)",
+      "Bash(skaffold run *)",
+      "Bash(go mod *)",
+      "Bash(k3d image *)",
+      "Bash(kubectl apply *)",
+      "Bash(kubectl rollout *)",
+      "Bash(kubectl get *)",
+      "Bash(kubectl describe *)",
+      "Bash(kubectl delete *)",
+      "Bash(docker tag *)",
+      "Bash(kubectl logs *)",
+      "Bash(kubectl port-forward *)",
+      "Bash(curl -s http://localhost:8080/wishlist)",
+      "Bash(npm test *)",
+      "Bash(kubectl exec *)",
+      "Bash(protoc --go_out=. --go-grpc_out=. protos/demo.proto)"
+    ]
+  }
+}

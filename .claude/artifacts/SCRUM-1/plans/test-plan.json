@@ -1,0 +1,96 @@
+{
+  "unit": {
+    "framework": "xunit",
+    "location": "src/favoritesservice/tests/",
+    "coverageTarget": 80,
+    "testCount": 15,
+    "estimatedTime": "5 minutes",
+    "tests": [
+      "Test AddFavorite idempotency (same product added twice)",
+      "Test GetFavorites returns sorted list (newest first)",
+      "Test RemoveFavorite removes product",
+      "Test ClearFavorites empties wishlist",
+      "Test AddFavorite with non-existent product",
+      "Test concurrent AddFavorite race condition prevention",
+      "Test AddFavorite timestamp is set correctly",
+      "Test GetFavorites empty wishlist",
+      "Test RemoveFavorite on non-existent product",
+      "Test session isolation (different sessions don't interfere)",
+      "Test large wishlist (500+ items)",
+      "Test invalid product ID handling",
+      "Test invalid session ID handling",
+      "Test storage layer abstraction (IFavoritesStore)",
+      "Test protobuf serialization round-trip"
+    ]
+  },
+  "integration": {
+    "framework": "xunit",
+    "location": "src/favoritesservice/tests/",
+    "testCount": 8,
+    "estimatedTime": "2 minutes",
+    "tests": [
+      "Frontend add to wishlist → FavoritesService add → Redis storage",
+      "Frontend view wishlist → FavoritesService get → ProductCatalogService lookup",
+      "Frontend remove from wishlist → FavoritesService remove → Redis update",
+      "Frontend add to cart from wishlist → Cart and Wishlist both updated",
+      "Session cookie validation → session ID passed to FavoritesService",
+      "Currency conversion on wishlist display",
+      "Concurrent wishlist modifications via multiple frontend instances",
+      "Error handling: FavoritesService unavailable"
+    ]
+  },
+  "e2e": {
+    "framework": "playwright",
+    "location": "tests/e2e/",
+    "pages": [
+      {
+        "url": "/product/OLJCESPC7Z",
+        "name": "Product Page",
+        "actions": [
+          "add product to wishlist",
+          "verify button changes to 'Remove from Wishlist'",
+          "verify confirmation message"
+        ]
+      },
+      {
+        "url": "/wishlist",
+        "name": "Wishlist Page",
+        "actions": [
+          "view wishlist with 3 items",
+          "verify product images, names, prices display",
+          "verify 'Add to Cart' button",
+          "verify 'Remove from Wishlist' button",
+          "remove a product",
+          "verify item count updates"
+        ]
+      },
+      {
+        "url": "/",
+        "name": "Home Page",
+        "actions": [
+          "verify wishlist badge displays in header",
+          "click wishlist link",
+          "verify navigation to /wishlist"
+        ]
+      }
+    ],
+    "testCount": 10,
+    "estimatedTime": "3 minutes",
+    "scenarios": [
+      "User adds product to wishlist from product page",
+      "User views wishlist with multiple products",
+      "User removes product from wishlist",
+      "User views empty wishlist",
+      "User adds product from wishlist to cart",
+      "Wishlist persists across page reloads",
+      "Wishlist persists within session TTL (48 hours)",
+      "Wishlist expires with session",
+      "Currency changes reflect on wishlist",
+      "Error message shown when service unavailable"
+    ]
+  },
+  "visualVerification": {
+    "required": false,
+    "mode": "screenshot"
+  }
+}

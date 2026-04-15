@@ -84,7 +84,7 @@ func (fe *frontendServer) viewWishlistHandler(w http.ResponseWriter, r *http.Req
 	currencies, err := fe.getCurrencies(r.Context())
 	if err != nil {
 		log.WithError(err).Warn("could not retrieve currencies")
-		currencies = []*pb.Currency{}
+		currencies = []string{}
 	}
 
 	if err := templates.ExecuteTemplate(w, "wishlist", injectCommonTemplateData(r, map[string]interface{}{
