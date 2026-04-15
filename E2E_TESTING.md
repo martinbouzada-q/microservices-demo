@@ -82,11 +82,16 @@ npx playwright show-report
 
 ### `playwright.config.ts`
 - **Base URL**: `http://localhost:8080` (configurable con `BASE_URL` env var)
-- **Reutiliza servidor existente**: `reuseExistingServer: true`
+- **WebServer**: NO configurado (corres manualmente con kubectl port-forward)
 - **Browsers**: Chromium, Firefox, WebKit
 - **Screenshots**: Solo en fallo
 - **Videos**: Retenidos en fallo
 - **Reportes**: HTML
+
+⚠️ **IMPORTANTE**: Debes ejecutar el port-forward ANTES de los tests:
+```bash
+kubectl port-forward deployment/frontend 8080:8080
+```
 
 ### Configuración personalizada
 
@@ -108,8 +113,18 @@ npx playwright test --project=firefox
 
 ## 🐛 Troubleshooting
 
-### Error: "Process from config.webServer was not able to start"
-**Solución**: Verifica que `playwright.config.ts` tenga `reuseExistingServer: true` (ya corregido)
+### Error: "config.webServer.command cannot be empty"
+**Solución**: Este error fue corregido en `playwright.config.ts`. No hay `webServer` configurado. Debes ejecutar manualmente:
+```bash
+kubectl port-forward deployment/frontend 8080:8080
+```
+Antes de ejecutar los tests.
+
+### Error: "Connection refused" en localhost:8080
+**Solución**: El port-forward no está activo. Ejecuta en otra terminal:
+```bash
+kubectl port-forward deployment/frontend 8080:8080
+```
 
 ### Error: "Connection refused" o "ECONNREFUSED"
 **Solución**: Asegúrate que:
