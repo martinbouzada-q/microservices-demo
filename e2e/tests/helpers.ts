@@ -41,7 +41,7 @@ export async function getWishlistItemCount(page: Page): Promise<number> {
 }
 
 /**
- * Get the current currency from page
+ * Get the current curren00+cy from page
  */
 export async function getCurrentCurrency(page: Page): Promise<string> {
   const currencyEl = page.locator('[class*="currency"]').first();
