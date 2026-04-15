@@ -34,9 +34,7 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    url: 'http://localhost:8080',
-    reuseExistingServer: true,
-    timeout: 120 * 1000,
-  },
+  // Note: webServer is not configured because the app runs on Kubernetes
+  // Make sure to run: kubectl port-forward deployment/frontend 8080:8080
+  // before running tests
 });
