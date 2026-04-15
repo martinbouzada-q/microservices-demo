@@ -236,6 +236,94 @@ func (fe *frontendServer) addToCartHandler(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusFound)
 }
 
+// apiAddToCartHandler handles AJAX POST requests from add-to-cart.js
+// Returns JSON response instead of 302 redirect
+func (fe *frontendServer) apiAddToCartHandler(w http.ResponseWriter, r *http.Request) {
+	log := r.Context().Value(ctxKeyLog{}).(logrus.FieldLogger)
+
+	// Parse JSON request body
+	var req struct {
+		ProductID string `json:"productId"`
+		Quantity  uint64 `json:"quantity"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"error":   "Invalid request body",
+			"retryable": false,
+		})
+		return
+	}
+
+	// Validate payload
+	payload := validator.AddToCartPayload{
+		Quantity:  req.Quantity,
+		ProductID: req.ProductID,
+	}
+	if err := payload.Validate(); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"error":   err.Error(),
+			"retryable": false,
+		})
+		return
+	}
+
+	log.WithField("product", payload.ProductID).WithField("quantity", payload.Quantity).Debug("adding to cart via API")
+
+	// Get product details
+	p, err := fe.getProduct(r.Context(), payload.ProductID)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"error":   "Could not retrieve product",
+			"retryable": true,
+		})
+		log.WithError(err).Error("failed to get product")
+		return
+	}
+
+	// Insert to cart
+	if err := fe.insertCart(r.Context(), sessionID(r), p.GetId(), int32(payload.Quantity)); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+			"error":   "Failed to add item to cart",
+			"retryable": true,
+		})
+		log.WithError(err).Error("failed to insert to cart")
+		return
+	}
+
+	// Get updated cart size
+	cartItems, err := fe.getCart(r.Context(), sessionID(r))
+	if err != nil {
+		log.WithError(err).Warn("could not retrieve cart size after add")
+	}
+
+	cartSize := 0
+	if cartItems != nil {
+		cartSize = len(cartItems)
+	}
+
+	// Success response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"cartSize": cartSize,
+		"message": fmt.Sprintf("Added %d item(s) to cart", payload.Quantity),
+	})
+}
+
 func (fe *frontendServer) emptyCartHandler(w http.ResponseWriter, r *http.Request) {
 	log := r.Context().Value(ctxKeyLog{}).(logrus.FieldLogger)
 	log.Debug("emptying cart")

@@ -1,0 +1,13 @@
+{
+  "primaryLanguage": "Go",
+  "secondaryLanguages": ["C#", "Java", "Node.js", "Python"],
+  "architecture": "Microservices (gRPC)",
+  "frameworks": {
+    "go": "gorilla/mux, gRPC, OpenTelemetry",
+    "csharp": ".NET 10.0",
+    "java": "Gradle, OpenTelemetry",
+    "nodejs": "Node.js with gRPC",
+    "python": "Python 3.x"
+  },
+  "deployment": "Kubernetes (k3d local cluster)"
+}

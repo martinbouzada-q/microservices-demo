@@ -66,7 +66,10 @@
               </select>
               <img src="{{ $.baseUrl }}/static/icons/Hipster_DownArrow.svg" alt="">
             </div>
-            <button type="submit" class="cymbal-button-primary">Add To Cart</button>
+            <button type="submit" class="cymbal-button-primary add-to-cart-btn" aria-busy="false" data-product-id="{{$.product.Item.Id}}">
+              <span class="btn-text">Add To Cart</span>
+              <span class="btn-spinner" style="display: none;"></span>
+            </button>
           </form>
         </div>
       </div>

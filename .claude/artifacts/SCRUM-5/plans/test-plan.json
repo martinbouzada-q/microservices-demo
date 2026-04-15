@@ -1,0 +1,184 @@
+{
+  "ticketId": "SCRUM-5",
+  "title": "Improve Visual Feedback for Add-to-Cart Actions",
+  "testLevels": {
+    "unit": {
+      "framework": "Jest",
+      "language": "JavaScript",
+      "coverageTarget": 80,
+      "testFile": "frontend/static/js/add-to-cart.test.js",
+      "scenarios": [
+        "Debouncing: Rapid clicks within 100ms send only 1 request",
+        "updateCartBadge: Updates DOM cart count correctly",
+        "Error handling: Shows error toast on network failure",
+        "Button state: Correctly toggles loading/enabled states",
+        "Input validation: Rejects invalid quantity/productId"
+      ]
+    },
+    "component": {
+      "framework": "Playwright Test Components",
+      "language": "TypeScript",
+      "scenarios": [
+        "Toast component renders with correct message and type",
+        "Button shows/hides spinner during loading",
+        "Cart badge animation triggers on update",
+        "Loading state persists until response received"
+      ]
+    },
+    "integration": {
+      "framework": "Jest with Supertest",
+      "language": "Go/TypeScript",
+      "scenarios": [
+        "Full flow: Click button → Fetch → CartService call → Update badge",
+        "Error recovery: Service failure → Retry button → Retry succeeds",
+        "Cross-origin: CORS headers correct for /api/cart/add endpoint",
+        "Session handling: CartService receives correct session cookie"
+      ]
+    },
+    "e2e": {
+      "framework": "Playwright",
+      "language": "TypeScript",
+      "browserEngines": ["chromium", "firefox", "webkit"],
+      "viewports": [
+        { "name": "desktop", "width": 1920, "height": 1080 },
+        { "name": "tablet", "width": 768, "height": 1024 },
+        { "name": "mobile", "width": 375, "height": 667 }
+      ],
+      "scenarios": [
+        {
+          "id": "SC1",
+          "name": "User sees confirmation after adding product to cart",
+          "steps": [
+            "Navigate to product OLJCESPC7Z",
+            "Set quantity to 2",
+            "Click Add To Cart",
+            "Verify button shows loading state",
+            "Verify toast appears within 200ms",
+            "Verify cart badge updates to 2"
+          ]
+        },
+        {
+          "id": "SC2",
+          "name": "User sees error when CartService unavailable",
+          "steps": [
+            "Mock CartService to return error",
+            "Navigate to product page",
+            "Click Add To Cart",
+            "Verify error toast appears",
+            "Verify cart badge does NOT update",
+            "Verify retry button is shown"
+          ]
+        },
+        {
+          "id": "SC3",
+          "name": "Button provides visual feedback during request",
+          "steps": [
+            "Click Add To Cart button",
+            "Immediately verify button is disabled",
+            "Verify spinner icon is visible",
+            "Wait for response",
+            "Verify button becomes enabled again",
+            "Verify spinner is hidden"
+          ]
+        },
+        {
+          "id": "SC4",
+          "name": "Rapid button clicks are debounced",
+          "steps": [
+            "Intercept network requests",
+            "Rapidly click button 3 times in < 100ms",
+            "Wait for completion",
+            "Verify only 1 request was sent to server"
+          ]
+        },
+        {
+          "id": "SC5",
+          "name": "Screen reader announces cart addition",
+          "steps": [
+            "Enable screen reader (NVDA/VoiceOver)",
+            "Navigate with keyboard to Add To Cart button",
+            "Press Enter",
+            "Verify announcement: 'Added 2 items to cart'"
+          ]
+        }
+      ]
+    },
+    "accessibility": {
+      "framework": "Axe-core + Manual Testing",
+      "wcagLevel": "AA",
+      "scenarios": [
+        "ARIA live region exists and updates on cart change",
+        "Button has aria-busy attribute that reflects loading state",
+        "Toast has role='status' and aria-live='assertive'",
+        "Keyboard navigation: Tab through product page, Enter to add",
+        "Focus management: Focus returns to button after toast dismisses",
+        "Color contrast: Toast text meets WCAG AA 4.5:1 ratio",
+        "Screen reader: All interactive elements announced correctly"
+      ],
+      "tools": [
+        "axe DevTools",
+        "NVDA (Windows)",
+        "VoiceOver (Mac)",
+        "WAVE Browser Extension"
+      ]
+    },
+    "performance": {
+      "framework": "Lighthouse + Chrome DevTools",
+      "metrics": {
+        "addToCartLatency": {
+          "target": "< 100ms",
+          "measurement": "POST /api/cart/add response time"
+        },
+        "javascriptBundleSize": {
+          "target": "< 10KB increase",
+          "measurement": "add-to-cart.js + dependencies"
+        },
+        "fcp": {
+          "target": "< 2s",
+          "measurement": "First Contentful Paint"
+        },
+        "lcp": {
+          "target": "< 2.5s",
+          "measurement": "Largest Contentful Paint"
+        },
+        "cls": {
+          "target": "< 0.1",
+          "measurement": "Cumulative Layout Shift"
+        }
+      }
+    },
+    "visualRegression": {
+      "framework": "Playwright Screenshots",
+      "scenarios": [
+        "Product page with no cart items",
+        "Product page with items in cart",
+        "Button in idle state",
+        "Button in loading state (spinner visible)",
+        "Success toast notification",
+        "Error toast notification",
+        "Cart badge: 0, 1, 5, 10+ items",
+        "Mobile viewport: button layout, toast positioning",
+        "Tablet viewport: same as mobile",
+        "Desktop viewport: full layout"
+      ]
+    }
+  },
+  "testData": {
+    "productIds": ["OLJCESPC7Z", "JBZF5U62N0"],
+    "quantities": [1, 2, 5, 10],
+    "errorScenarios": [
+      "CartService timeout",
+      "CartService returns 500 error",
+      "Network timeout during fetch",
+      "Malformed response from server"
+    ]
+  },
+  "exitCriteria": {
+    "unit": "80% coverage, all tests passing",
+    "e2e": "All 5 BDD scenarios passing on Chrome, Firefox, Safari",
+    "accessibility": "0 WCAG violations via Axe",
+    "performance": "add-to-cart latency < 100ms 95th percentile",
+    "cross-browser": "Passing on Chrome, Firefox, Safari, Edge",
+    "mobile": "Passing on iPhone (375px) and Android (360px) viewports"
+  }
+}

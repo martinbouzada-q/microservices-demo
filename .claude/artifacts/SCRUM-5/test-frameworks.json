@@ -1,0 +1,13 @@
+{
+  "unit": [
+    { "name": "go test", "language": "Go" },
+    { "name": ".NET Test", "language": "C#" }
+  ],
+  "integration": [
+    { "name": "go test", "language": "Go" },
+    { "name": ".NET Integration", "language": "C#" }
+  ],
+  "e2e": [
+    { "name": "Playwright", "language": "TypeScript", "status": "configured" }
+  ]
+}
