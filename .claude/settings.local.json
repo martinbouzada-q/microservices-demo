@@ -25,7 +25,8 @@
       "Bash(curl -s http://localhost:8080/wishlist)",
       "Bash(npm test *)",
       "Bash(kubectl exec *)",
-      "Bash(protoc --go_out=. --go-grpc_out=. protos/demo.proto)"
+      "Bash(protoc --go_out=. --go-grpc_out=. protos/demo.proto)",
+      "Bash(curl -s http://localhost:8080/)"
     ]
   }
 }

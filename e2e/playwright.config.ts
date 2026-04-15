@@ -35,9 +35,8 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'cd .. && docker-compose up',
     url: 'http://localhost:8080',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120 * 1000,
   },
 });
