@@ -161,6 +161,8 @@ func main() {
 	r.HandleFunc(baseUrl+"/wishlist", svc.viewWishlistHandler).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc(baseUrl+"/wishlist/add", svc.addToWishlistHandler).Methods(http.MethodPost)
 	r.HandleFunc(baseUrl+"/wishlist/remove", svc.removeFromWishlistHandler).Methods(http.MethodPost)
+	r.HandleFunc(baseUrl+"/orders", svc.viewOrdersListHandler).Methods(http.MethodGet, http.MethodHead)
+	r.HandleFunc(baseUrl+"/order/{id}", svc.viewOrderDetailHandler).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc(baseUrl+"/setCurrency", svc.setCurrencyHandler).Methods(http.MethodPost)
 	r.HandleFunc(baseUrl+"/logout", svc.logoutHandler).Methods(http.MethodGet)
 	r.HandleFunc(baseUrl+"/cart/checkout", svc.placeOrderHandler).Methods(http.MethodPost)

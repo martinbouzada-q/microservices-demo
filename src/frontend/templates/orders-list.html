@@ -1,0 +1,120 @@
+<!--
+ Copyright 2020 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+{{ define "orders-list" }}
+{{ template "header" . }}
+
+<div {{ with $.platform_css }} class="{{.}}" {{ end }}>
+  <span class="platform-flag">
+    {{$.platform_name}}
+  </span>
+</div>
+
+<main role="main" class="container">
+  <div class="row mt-5">
+    <div class="col-lg-8 mx-auto">
+      <h1>Purchase History</h1>
+
+      {{ if .orders }}
+        <div class="orders-list mt-4">
+          {{ range .orders }}
+          <div class="order-card card mb-3">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h5 class="card-title">
+                    <a href="{{ $.baseUrl }}/order/{{ .OrderId }}" class="order-link">
+                      {{ .OrderId }}
+                    </a>
+                  </h5>
+                  <p class="card-text text-muted mb-2">
+                    <strong>Date:</strong> {{ .CreatedAt | formatDate }}
+                  </p>
+                  <p class="card-text text-muted mb-2">
+                    <strong>Items:</strong> {{ len .Items }} item{{ if ne (len .Items) 1 }}s{{ end }}
+                  </p>
+                </div>
+                <div class="col-md-4 text-right">
+                  <div class="order-total mb-2">
+                    <strong>{{ renderMoney .TotalCost }}</strong>
+                  </div>
+                  <span class="badge badge-{{ .ShippingStatusBadgeClass }}">
+                    {{ .ShippingStatus | formatOrderStatus }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{ end }}
+        </div>
+
+        <!-- Pagination -->
+        {{ if gt .PageCount 1 }}
+        <nav aria-label="Page navigation" class="mt-4">
+          <ul class="pagination justify-content-center">
+            {{ if gt .CurrentPage 1 }}
+            <li class="page-item">
+              <a class="page-link" href="{{ $.baseUrl }}/orders?page={{ sub .CurrentPage 1 }}">Previous</a>
+            </li>
+            {{ else }}
+            <li class="page-item disabled">
+              <span class="page-link">Previous</span>
+            </li>
+            {{ end }}
+
+            {{ range $i := seq 1 .PageCount }}
+            {{ if eq $i $.CurrentPage }}
+            <li class="page-item active">
+              <span class="page-link">{{ $i }}</span>
+            </li>
+            {{ else }}
+            <li class="page-item">
+              <a class="page-link" href="{{ $.baseUrl }}/orders?page={{ $i }}">{{ $i }}</a>
+            </li>
+            {{ end }}
+            {{ end }}
+
+            {{ if lt .CurrentPage .PageCount }}
+            <li class="page-item">
+              <a class="page-link" href="{{ $.baseUrl }}/orders?page={{ add .CurrentPage 1 }}">Next</a>
+            </li>
+            {{ else }}
+            <li class="page-item disabled">
+              <span class="page-link">Next</span>
+            </li>
+            {{ end }}
+          </ul>
+        </nav>
+        <p class="text-center text-muted mt-2">
+          Page {{ .CurrentPage }} of {{ .PageCount }} • Showing {{ len .Orders }} of {{ .TotalCount }} orders
+        </p>
+        {{ end }}
+
+      {{ else }}
+      <!-- Empty State -->
+      <div class="empty-orders text-center py-5">
+        <p class="mb-3 text-muted">You haven't placed any orders yet.</p>
+        <a href="{{ $.baseUrl }}/" class="btn btn-primary">
+          Start Shopping
+        </a>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</main>
+
+{{ template "footer" . }}
+{{ end }}

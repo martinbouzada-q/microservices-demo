@@ -33,7 +33,9 @@
       "Bash(skaffold build *)",
       "Bash(go test *)",
       "Bash(go build *)",
-      "Bash(grep *)"
+      "Bash(grep *)",
+      "mcp__claude_ai_Atlassian__search",
+      "Bash(ls -la docker-compose* skaffold.yaml)"
     ]
   }
 }

@@ -48,8 +48,15 @@ var (
 	assistantEnabled = "true" == strings.ToLower(os.Getenv("ENABLE_ASSISTANT"))
 	templates        = template.Must(template.New("").
 				Funcs(template.FuncMap{
-			"renderMoney":        renderMoney,
-			"renderCurrencyLogo": renderCurrencyLogo,
+			"renderMoney":         renderMoney,
+			"renderCurrencyLogo":  renderCurrencyLogo,
+			"formatDate":          formatDate,
+			"formatDateTime":      formatDateTime,
+			"formatOrderStatus":   formatOrderStatus,
+			"formatPaymentStatus": formatPaymentStatus,
+			"add":                 func(a, b int) int { return a + b },
+			"sub":                 func(a, b int) int { return a - b },
+			"seq":                 seq,
 		}).ParseGlob("templates/*.html"))
 	plat platformDetails
 )
@@ -720,4 +727,326 @@ func stringinSlice(slice []string, val string) bool {
 		}
 	}
 	return false
+}
+
+// Order-related handlers for SCRUM-2
+
+type orderItemView struct {
+	Item          *pb.CartItem
+	ProductName   string
+	ItemPrice     *pb.Money
+	ItemSubtotal  *pb.Money
+}
+
+type orderView struct {
+	OrderId                  string
+	CreatedAt                string
+	ShippingStatus           string
+	ShippingStatusBadgeClass string
+	PaymentStatus            string
+	PaymentStatusBadgeClass  string
+	ShippingAddress          *pb.Address
+	TotalCost                *pb.Money
+	SubtotalCost             *pb.Money
+	ShippingCost             *pb.Money
+	Items                    []orderItemView
+	TrackingId               string
+	PaymentTransactionId     string
+	ShippedAt                string
+	DeliveredAt              string
+	EstimatedDeliveryDate    string
+	StatusPlaced             bool
+	StatusProcessing         bool
+	StatusShipped            bool
+	StatusDelivered          bool
+}
+
+// getMockOrders returns mock order data for demonstration purposes
+// In production, this would call the OrderService gRPC
+func (fe *frontendServer) getMockOrders(userID string) []orderView {
+	// Sample mock orders for demonstration
+	orders := []orderView{
+		{
+			OrderId:                  "ORD-20260414-001",
+			CreatedAt:                "2026-04-14T14:30:00Z",
+			ShippingStatus:           "shipped",
+			ShippingStatusBadgeClass: "warning",
+			PaymentStatus:            "completed",
+			PaymentStatusBadgeClass:  "success",
+			TrackingId:               "1Z999AA10123456784",
+			PaymentTransactionId:     "TXN-20260414-001",
+			ShippedAt:                "2026-04-15T09:00:00Z",
+			DeliveredAt:              "",
+			EstimatedDeliveryDate:    "2026-04-17T23:59:59Z",
+			StatusPlaced:             true,
+			StatusProcessing:         true,
+			StatusShipped:            true,
+			StatusDelivered:          false,
+			TotalCost: &pb.Money{
+				CurrencyCode: "USD",
+				Units:        47,
+				Nanos:        990000000,
+			},
+			SubtotalCost: &pb.Money{
+				CurrencyCode: "USD",
+				Units:        39,
+				Nanos:        990000000,
+			},
+			ShippingCost: &pb.Money{
+				CurrencyCode: "USD",
+				Units:        8,
+				Nanos:        0,
+			},
+			Items: []orderItemView{
+				{
+					Item: &pb.CartItem{
+						ProductId: "OLJCESPC7Z",
+						Quantity:  1,
+					},
+					ProductName: "Vintage Sunglasses",
+					ItemPrice: &pb.Money{
+						CurrencyCode: "USD",
+						Units:        19,
+						Nanos:        990000000,
+					},
+					ItemSubtotal: &pb.Money{
+						CurrencyCode: "USD",
+						Units:        19,
+						Nanos:        990000000,
+					},
+				},
+				{
+					Item: &pb.CartItem{
+						ProductId: "9SIQT8TOJO",
+						Quantity:  2,
+					},
+					ProductName: "Camera Lens",
+					ItemPrice: &pb.Money{
+						CurrencyCode: "USD",
+						Units:        10,
+						Nanos:        0,
+					},
+					ItemSubtotal: &pb.Money{
+						CurrencyCode: "USD",
+						Units:        20,
+						Nanos:        0,
+					},
+				},
+			},
+			ShippingAddress: &pb.Address{
+				StreetAddress: "123 Main St",
+				City:          "San Francisco",
+				State:         "CA",
+				Country:       "US",
+				ZipCode:       94102,
+			},
+		},
+		{
+			OrderId:                  "ORD-20260410-002",
+			CreatedAt:                "2026-04-10T10:15:00Z",
+			ShippingStatus:           "delivered",
+			ShippingStatusBadgeClass: "success",
+			PaymentStatus:            "completed",
+			PaymentStatusBadgeClass:  "success",
+			TrackingId:               "1Z888BB20456789012",
+			PaymentTransactionId:     "TXN-20260410-002",
+			ShippedAt:                "2026-04-11T14:30:00Z",
+			DeliveredAt:              "2026-04-13T16:45:00Z",
+			EstimatedDeliveryDate:    "2026-04-13T23:59:59Z",
+			StatusPlaced:             true,
+			StatusProcessing:         true,
+			StatusShipped:            true,
+			StatusDelivered:          true,
+			TotalCost: &pb.Money{
+				CurrencyCode: "USD",
+				Units:        129,
+				Nanos:        950000000,
+			},
+			SubtotalCost: &pb.Money{
+				CurrencyCode: "USD",
+				Units:        119,
+				Nanos:        950000000,
+			},
+			ShippingCost: &pb.Money{
+				CurrencyCode: "USD",
+				Units:        10,
+				Nanos:        0,
+			},
+			Items: []orderItemView{
+				{
+					Item: &pb.CartItem{
+						ProductId: "66VCHSJNUP",
+						Quantity:  1,
+					},
+					ProductName: "Vintage Camera",
+					ItemPrice: &pb.Money{
+						CurrencyCode: "USD",
+						Units:        119,
+						Nanos:        950000000,
+					},
+					ItemSubtotal: &pb.Money{
+						CurrencyCode: "USD",
+						Units:        119,
+						Nanos:        950000000,
+					},
+				},
+			},
+			ShippingAddress: &pb.Address{
+				StreetAddress: "456 Oak Ave",
+				City:          "Seattle",
+				State:         "WA",
+				Country:       "US",
+				ZipCode:       98101,
+			},
+		},
+	}
+	return orders
+}
+
+func (fe *frontendServer) viewOrdersListHandler(w http.ResponseWriter, r *http.Request) {
+	log := r.Context().Value(ctxKeyLog{}).(logrus.FieldLogger)
+	log.Debug("viewing orders list")
+
+	userID := sessionID(r)
+
+	// Get orders (mock data for now)
+	orders := fe.getMockOrders(userID)
+
+	// Parse pagination
+	pageStr := r.URL.Query().Get("page")
+	page := 1
+	if pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+
+	pageSize := 20
+	totalCount := len(orders)
+	pageCount := (totalCount + pageSize - 1) / pageSize
+
+	// Validate page
+	if page > pageCount && pageCount > 0 {
+		page = pageCount
+	}
+
+	// Get orders for current page
+	startIdx := (page - 1) * pageSize
+	endIdx := startIdx + pageSize
+	if endIdx > totalCount {
+		endIdx = totalCount
+	}
+
+	pageOrders := orders
+	if startIdx < totalCount {
+		pageOrders = orders[startIdx:endIdx]
+	} else {
+		pageOrders = []orderView{}
+	}
+
+	if err := templates.ExecuteTemplate(w, "orders-list", injectCommonTemplateData(r, map[string]interface{}{
+		"orders":       pageOrders,
+		"current_page": page,
+		"page_count":   pageCount,
+		"total_count":  totalCount,
+		"user_id":      userID,
+	})); err != nil {
+		log.WithError(err).Error("failed to execute orders-list template")
+	}
+}
+
+func (fe *frontendServer) viewOrderDetailHandler(w http.ResponseWriter, r *http.Request) {
+	log := r.Context().Value(ctxKeyLog{}).(logrus.FieldLogger)
+	log.Debug("viewing order detail")
+
+	vars := mux.Vars(r)
+	orderID := vars["id"]
+	userID := sessionID(r)
+
+	if orderID == "" {
+		renderHTTPError(log, r, w, errors.New("order ID is required"), http.StatusBadRequest)
+		return
+	}
+
+	// Get order (mock data for now)
+	orders := fe.getMockOrders(userID)
+	var order *orderView
+	for i := range orders {
+		if orders[i].OrderId == orderID {
+			order = &orders[i]
+			break
+		}
+	}
+
+	if order == nil {
+		renderHTTPError(log, r, w, errors.New("order not found"), http.StatusNotFound)
+		return
+	}
+
+	if err := templates.ExecuteTemplate(w, "order-detail", injectCommonTemplateData(r, map[string]interface{}{
+		"order":   order,
+		"user_id": userID,
+	})); err != nil {
+		log.WithError(err).Error("failed to execute order-detail template")
+	}
+}
+
+// Template helper functions
+
+func formatDate(dateStr string) string {
+	if dateStr == "" {
+		return ""
+	}
+	t, err := time.Parse(time.RFC3339, dateStr)
+	if err != nil {
+		return dateStr
+	}
+	return t.Format("January 2, 2006")
+}
+
+func formatDateTime(dateStr string) string {
+	if dateStr == "" {
+		return ""
+	}
+	t, err := time.Parse(time.RFC3339, dateStr)
+	if err != nil {
+		return dateStr
+	}
+	return t.Format("January 2, 2006 3:04 PM")
+}
+
+func formatOrderStatus(status string) string {
+	statusMap := map[string]string{
+		"placed":      "Order Placed",
+		"processing":  "Processing",
+		"shipped":     "Shipped",
+		"delivered":   "Delivered",
+		"failed":      "Failed",
+		"cancelled":   "Cancelled",
+	}
+	if display, ok := statusMap[status]; ok {
+		return display
+	}
+	return strings.Title(status)
+}
+
+func formatPaymentStatus(status string) string {
+	statusMap := map[string]string{
+		"placed":    "Pending",
+		"completed": "Completed",
+		"failed":    "Failed",
+		"refunded":  "Refunded",
+	}
+	if display, ok := statusMap[status]; ok {
+		return display
+	}
+	return strings.Title(status)
+}
+
+func seq(start, end int) []int {
+	var result []int
+	for i := start; i <= end; i++ {
+		result = append(result, i)
+	}
+	return result
 }

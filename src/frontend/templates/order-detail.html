@@ -1,0 +1,244 @@
+<!--
+ Copyright 2020 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+{{ define "order-detail" }}
+{{ template "header" . }}
+
+<div {{ with $.platform_css }} class="{{.}}" {{ end }}>
+  <span class="platform-flag">
+    {{$.platform_name}}
+  </span>
+</div>
+
+<main role="main" class="container">
+  <div class="row mt-5">
+    <div class="col-lg-8 mx-auto">
+      <div class="mb-4">
+        <a href="{{ $.baseUrl }}/orders" class="btn btn-outline-secondary">← Back to Orders</a>
+      </div>
+
+      <h1>Order {{ .order.OrderId }}</h1>
+      <p class="text-muted">Placed on {{ .order.CreatedAt | formatDate }}</p>
+
+      <!-- Order Status Section -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Order Status</h5>
+        </div>
+        <div class="card-body">
+          <div class="order-status-timeline">
+            <div class="status-item {{ if .order.StatusPlaced }}completed{{ end }}">
+              <div class="status-icon">✓</div>
+              <div class="status-text">
+                <strong>Order Placed</strong>
+                <p class="text-muted">{{ .order.CreatedAt | formatDateTime }}</p>
+              </div>
+            </div>
+
+            <div class="status-item {{ if .order.StatusProcessing }}completed{{ end }}">
+              <div class="status-icon">✓</div>
+              <div class="status-text">
+                <strong>Processing</strong>
+                <p class="text-muted">Being prepared for shipment</p>
+              </div>
+            </div>
+
+            <div class="status-item {{ if .order.StatusShipped }}completed{{ end }}">
+              <div class="status-icon">📦</div>
+              <div class="status-text">
+                <strong>Shipped</strong>
+                {{ if .order.ShippedAt }}
+                <p class="text-muted">{{ .order.ShippedAt | formatDateTime }}</p>
+                {{ end }}
+                {{ if .order.TrackingId }}
+                <p class="text-muted">
+                  <a href="https://tracking.example.com/{{ .order.TrackingId }}" target="_blank">
+                    Tracking: {{ .order.TrackingId }}
+                  </a>
+                </p>
+                {{ end }}
+              </div>
+            </div>
+
+            <div class="status-item {{ if .order.StatusDelivered }}completed{{ end }}">
+              <div class="status-icon">🏠</div>
+              <div class="status-text">
+                <strong>Delivered</strong>
+                {{ if .order.DeliveredAt }}
+                <p class="text-muted">{{ .order.DeliveredAt | formatDateTime }}</p>
+                {{ end }}
+                {{ if .order.EstimatedDeliveryDate }}
+                <p class="text-muted">Estimated: {{ .order.EstimatedDeliveryDate | formatDate }}</p>
+                {{ end }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Items Section -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Order Items</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ range .order.Items }}
+              <tr>
+                <td>{{ .ProductName }}</td>
+                <td>{{ .Item.Quantity }}</td>
+                <td>{{ renderMoney .ItemPrice }}</td>
+                <td>{{ renderMoney .ItemSubtotal }}</td>
+              </tr>
+              {{ end }}
+            </tbody>
+          </table>
+
+          <div class="row mt-4 text-right">
+            <div class="col-md-6 offset-md-6">
+              <div class="order-summary">
+                <div class="row">
+                  <div class="col-6"><strong>Subtotal:</strong></div>
+                  <div class="col-6">{{ renderMoney .order.SubtotalCost }}</div>
+                </div>
+                <div class="row">
+                  <div class="col-6"><strong>Shipping:</strong></div>
+                  <div class="col-6">{{ renderMoney .order.ShippingCost }}</div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-6"><strong>Total:</strong></div>
+                  <div class="col-6"><strong>{{ renderMoney .order.TotalCost }}</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping Address Section -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Shipping Address</h5>
+        </div>
+        <div class="card-body">
+          <div class="address-block">
+            <p>{{ .order.ShippingAddress.StreetAddress }}</p>
+            <p>{{ .order.ShippingAddress.City }}, {{ .order.ShippingAddress.State }} {{ .order.ShippingAddress.ZipCode }}</p>
+            <p>{{ .order.ShippingAddress.Country }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Information Section -->
+      {{ if .order.PaymentTransactionId }}
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Payment Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Payment Status:</strong> <span class="badge badge-{{ .order.PaymentStatusBadgeClass }}">{{ .order.PaymentStatus | formatPaymentStatus }}</span></p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Transaction ID:</strong> {{ .order.PaymentTransactionId }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+
+      <div class="mt-4">
+        <a href="{{ $.baseUrl }}/" class="btn btn-primary">Continue Shopping</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<style>
+  .order-status-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 10px;
+    border-left: 3px solid #ccc;
+    padding-left: 15px;
+  }
+
+  .status-item.completed {
+    border-left-color: #28a745;
+    background-color: #f0f8f0;
+  }
+
+  .status-icon {
+    min-width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .status-item.completed .status-icon {
+    background-color: #28a745;
+    color: white;
+  }
+
+  .status-text h5 {
+    margin: 0;
+  }
+
+  .status-text p {
+    margin: 5px 0 0 0;
+  }
+
+  .address-block p {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .order-summary {
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  .order-summary .row {
+    padding: 5px 0;
+  }
+</style>
+
+{{ template "footer" . }}
+{{ end }}
