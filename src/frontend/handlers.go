@@ -950,9 +950,9 @@ func (fe *frontendServer) viewOrdersListHandler(w http.ResponseWriter, r *http.R
 
 	if err := templates.ExecuteTemplate(w, "orders-list", injectCommonTemplateData(r, map[string]interface{}{
 		"orders":       pageOrders,
-		"current_page": page,
-		"page_count":   pageCount,
-		"total_count":  totalCount,
+		"CurrentPage":  page,
+		"PageCount":    pageCount,
+		"TotalCount":   totalCount,
 		"user_id":      userID,
 	})); err != nil {
 		log.WithError(err).Error("failed to execute orders-list template")
