@@ -849,12 +849,8 @@ func (fe *frontendServer) getMockOrders(userID string) []orderView {
 
 	// Generate 23 additional orders for pagination testing
 	for i := 1; i <= 23; i++ {
-		dayOffset := 10 + i
-		orderNum := 23 + i
-		orderID := fmt.Sprintf("ORD-20260%02d-%03d", (dayOffset / 30) + 3, dayOffset%30)
-		if (dayOffset / 30) > 0 {
-			orderID = fmt.Sprintf("ORD-2026041%d-%03d", dayOffset/30, orderNum)
-		}
+		orderNum := 20 + i
+		orderID := fmt.Sprintf("ORD-202604%02d-%03d", (9 + i) / 30, orderNum)
 
 		statuses := []string{"placed", "processing", "shipped", "delivered"}
 		statusIdx := i % 4
@@ -870,14 +866,18 @@ func (fe *frontendServer) getMockOrders(userID string) []orderView {
 		products := []string{"2ZRWG08", "0PUK6V6EV0", "LS4PSXUNUM", "L9ECAV7KIM", "6E92ZMYYFZ"}
 		productIdx := i % len(products)
 
+		cities := []string{"New York", "Los Angeles", "Chicago", "Houston", "Phoenix"}
+		states := []string{"NY", "CA", "IL", "TX", "AZ"}
+		cityIdx := i % len(cities)
+
 		order := orderView{
 			OrderId:                  orderID,
-			CreatedAt:                time.Now().AddDate(0, 0, -dayOffset).Format(time.RFC3339),
+			CreatedAt:                time.Now().AddDate(0, 0, -(9+i)).Format(time.RFC3339),
 			ShippingStatus:           status,
 			ShippingStatusBadgeClass: statusClasses[status],
 			PaymentStatus:            "completed",
 			PaymentStatusBadgeClass:  "success",
-			PaymentTransactionId:     fmt.Sprintf("TXN-20260410-%03d", orderNum),
+			PaymentTransactionId:     fmt.Sprintf("TXN-202604%02d-%03d", (9+i)/30, orderNum),
 			StatusPlaced:             true,
 			StatusProcessing:         statusIdx >= 1,
 			StatusShipped:            statusIdx >= 2,
@@ -888,15 +888,15 @@ func (fe *frontendServer) getMockOrders(userID string) []orderView {
 			Items: []orderItemView{
 				{
 					Item: &pb.CartItem{ProductId: products[productIdx], Quantity: 1},
-					ProductName: fmt.Sprintf("Product %d", i),
+					ProductName: fmt.Sprintf("Product Item %d", i),
 					ItemPrice: &pb.Money{CurrencyCode: "USD", Units: int64(45 + i*5), Nanos: 0},
 					ItemSubtotal: &pb.Money{CurrencyCode: "USD", Units: int64(45 + i*5), Nanos: 0},
 				},
 			},
 			ShippingAddress: &pb.Address{
-				StreetAddress: fmt.Sprintf("%d Test St", 100+i),
-				City:          []string{"New York", "Los Angeles", "Chicago", "Houston", "Phoenix"}[i%5],
-				State:         []string{"NY", "CA", "IL", "TX", "AZ"}[i%5],
+				StreetAddress: fmt.Sprintf("%d Test Street", 100+i),
+				City:          cities[cityIdx],
+				State:         states[cityIdx],
 				Country:       "US",
 				ZipCode:       int32(10000 + i*100),
 			},
