@@ -764,142 +764,146 @@ type orderView struct {
 // getMockOrders returns mock order data for demonstration purposes
 // In production, this would call the OrderService gRPC
 func (fe *frontendServer) getMockOrders(userID string) []orderView {
-	// Sample mock orders for demonstration
+	// Sample mock orders for demonstration - 27 orders to test pagination with 20/page
 	orders := []orderView{
 		{
-			OrderId:                  "ORD-20260414-001",
+			OrderId:                  "ORD-20260416-027",
+			CreatedAt:                "2026-04-16T08:00:00Z",
+			ShippingStatus:           "processing",
+			ShippingStatusBadgeClass: "info",
+			PaymentStatus:            "completed",
+			PaymentStatusBadgeClass:  "success",
+			PaymentTransactionId:     "TXN-20260416-027",
+			StatusPlaced:             true,
+			StatusProcessing:         true,
+			StatusShipped:            false,
+			StatusDelivered:          false,
+			TotalCost: &pb.Money{CurrencyCode: "USD", Units: 34, Nanos: 990000000},
+			SubtotalCost: &pb.Money{CurrencyCode: "USD", Units: 29, Nanos: 990000000},
+			ShippingCost: &pb.Money{CurrencyCode: "USD", Units: 5, Nanos: 0},
+			Items: []orderItemView{{Item: &pb.CartItem{ProductId: "2ZRWG08", Quantity: 1}, ProductName: "Striped Socks", ItemPrice: &pb.Money{CurrencyCode: "USD", Units: 12, Nanos: 0}, ItemSubtotal: &pb.Money{CurrencyCode: "USD", Units: 12, Nanos: 0}}},
+			ShippingAddress: &pb.Address{StreetAddress: "999 Park Ln", City: "Boston", State: "MA", Country: "US", ZipCode: 02101},
+		},
+		{
+			OrderId:                  "ORD-20260415-026",
+			CreatedAt:                "2026-04-15T16:45:00Z",
+			ShippingStatus:           "shipped",
+			ShippingStatusBadgeClass: "warning",
+			PaymentStatus:            "completed",
+			PaymentStatusBadgeClass:  "success",
+			TrackingId:               "1Z999CC30987654321",
+			PaymentTransactionId:     "TXN-20260415-026",
+			ShippedAt:                "2026-04-16T10:30:00Z",
+			StatusPlaced:             true,
+			StatusProcessing:         true,
+			StatusShipped:            true,
+			StatusDelivered:          false,
+			TotalCost: &pb.Money{CurrencyCode: "USD", Units: 89, Nanos: 950000000},
+			SubtotalCost: &pb.Money{CurrencyCode: "USD", Units: 79, Nanos: 950000000},
+			ShippingCost: &pb.Money{CurrencyCode: "USD", Units: 10, Nanos: 0},
+			Items: []orderItemView{{Item: &pb.CartItem{ProductId: "0PUK6V6EV0", Quantity: 1}, ProductName: "Cloud White Sneakers", ItemPrice: &pb.Money{CurrencyCode: "USD", Units: 79, Nanos: 950000000}, ItemSubtotal: &pb.Money{CurrencyCode: "USD", Units: 79, Nanos: 950000000}}},
+			ShippingAddress: &pb.Address{StreetAddress: "888 Oak St", City: "Portland", State: "OR", Country: "US", ZipCode: 97201},
+		},
+		{
+			OrderId:                  "ORD-20260414-025",
 			CreatedAt:                "2026-04-14T14:30:00Z",
 			ShippingStatus:           "shipped",
 			ShippingStatusBadgeClass: "warning",
 			PaymentStatus:            "completed",
 			PaymentStatusBadgeClass:  "success",
 			TrackingId:               "1Z999AA10123456784",
-			PaymentTransactionId:     "TXN-20260414-001",
+			PaymentTransactionId:     "TXN-20260414-025",
 			ShippedAt:                "2026-04-15T09:00:00Z",
-			DeliveredAt:              "",
-			EstimatedDeliveryDate:    "2026-04-17T23:59:59Z",
 			StatusPlaced:             true,
 			StatusProcessing:         true,
 			StatusShipped:            true,
 			StatusDelivered:          false,
-			TotalCost: &pb.Money{
-				CurrencyCode: "USD",
-				Units:        47,
-				Nanos:        990000000,
-			},
-			SubtotalCost: &pb.Money{
-				CurrencyCode: "USD",
-				Units:        39,
-				Nanos:        990000000,
-			},
-			ShippingCost: &pb.Money{
-				CurrencyCode: "USD",
-				Units:        8,
-				Nanos:        0,
-			},
-			Items: []orderItemView{
-				{
-					Item: &pb.CartItem{
-						ProductId: "OLJCESPC7Z",
-						Quantity:  1,
-					},
-					ProductName: "Vintage Sunglasses",
-					ItemPrice: &pb.Money{
-						CurrencyCode: "USD",
-						Units:        19,
-						Nanos:        990000000,
-					},
-					ItemSubtotal: &pb.Money{
-						CurrencyCode: "USD",
-						Units:        19,
-						Nanos:        990000000,
-					},
-				},
-				{
-					Item: &pb.CartItem{
-						ProductId: "9SIQT8TOJO",
-						Quantity:  2,
-					},
-					ProductName: "Camera Lens",
-					ItemPrice: &pb.Money{
-						CurrencyCode: "USD",
-						Units:        10,
-						Nanos:        0,
-					},
-					ItemSubtotal: &pb.Money{
-						CurrencyCode: "USD",
-						Units:        20,
-						Nanos:        0,
-					},
-				},
-			},
-			ShippingAddress: &pb.Address{
-				StreetAddress: "123 Main St",
-				City:          "San Francisco",
-				State:         "CA",
-				Country:       "US",
-				ZipCode:       94102,
-			},
+			TotalCost: &pb.Money{CurrencyCode: "USD", Units: 47, Nanos: 990000000},
+			SubtotalCost: &pb.Money{CurrencyCode: "USD", Units: 39, Nanos: 990000000},
+			ShippingCost: &pb.Money{CurrencyCode: "USD", Units: 8, Nanos: 0},
+			Items: []orderItemView{{Item: &pb.CartItem{ProductId: "OLJCESPC7Z", Quantity: 1}, ProductName: "Vintage Sunglasses", ItemPrice: &pb.Money{CurrencyCode: "USD", Units: 19, Nanos: 990000000}, ItemSubtotal: &pb.Money{CurrencyCode: "USD", Units: 19, Nanos: 990000000}}, {Item: &pb.CartItem{ProductId: "9SIQT8TOJO", Quantity: 2}, ProductName: "Camera Lens", ItemPrice: &pb.Money{CurrencyCode: "USD", Units: 10, Nanos: 0}, ItemSubtotal: &pb.Money{CurrencyCode: "USD", Units: 20, Nanos: 0}}},
+			ShippingAddress: &pb.Address{StreetAddress: "123 Main St", City: "San Francisco", State: "CA", Country: "US", ZipCode: 94102},
 		},
 		{
-			OrderId:                  "ORD-20260410-002",
+			OrderId:                  "ORD-20260410-024",
 			CreatedAt:                "2026-04-10T10:15:00Z",
 			ShippingStatus:           "delivered",
 			ShippingStatusBadgeClass: "success",
 			PaymentStatus:            "completed",
 			PaymentStatusBadgeClass:  "success",
 			TrackingId:               "1Z888BB20456789012",
-			PaymentTransactionId:     "TXN-20260410-002",
+			PaymentTransactionId:     "TXN-20260410-024",
 			ShippedAt:                "2026-04-11T14:30:00Z",
 			DeliveredAt:              "2026-04-13T16:45:00Z",
-			EstimatedDeliveryDate:    "2026-04-13T23:59:59Z",
 			StatusPlaced:             true,
 			StatusProcessing:         true,
 			StatusShipped:            true,
 			StatusDelivered:          true,
-			TotalCost: &pb.Money{
-				CurrencyCode: "USD",
-				Units:        129,
-				Nanos:        950000000,
-			},
-			SubtotalCost: &pb.Money{
-				CurrencyCode: "USD",
-				Units:        119,
-				Nanos:        950000000,
-			},
-			ShippingCost: &pb.Money{
-				CurrencyCode: "USD",
-				Units:        10,
-				Nanos:        0,
-			},
+			TotalCost: &pb.Money{CurrencyCode: "USD", Units: 129, Nanos: 950000000},
+			SubtotalCost: &pb.Money{CurrencyCode: "USD", Units: 119, Nanos: 950000000},
+			ShippingCost: &pb.Money{CurrencyCode: "USD", Units: 10, Nanos: 0},
+			Items: []orderItemView{{Item: &pb.CartItem{ProductId: "66VCHSJNUP", Quantity: 1}, ProductName: "Vintage Camera", ItemPrice: &pb.Money{CurrencyCode: "USD", Units: 119, Nanos: 950000000}, ItemSubtotal: &pb.Money{CurrencyCode: "USD", Units: 119, Nanos: 950000000}}},
+			ShippingAddress: &pb.Address{StreetAddress: "456 Oak Ave", City: "Seattle", State: "WA", Country: "US", ZipCode: 98101},
+		},
+	}
+
+	// Generate 23 additional orders for pagination testing
+	for i := 1; i <= 23; i++ {
+		dayOffset := 10 + i
+		orderNum := 23 + i
+		orderID := fmt.Sprintf("ORD-20260%02d-%03d", (dayOffset / 30) + 3, dayOffset%30)
+		if (dayOffset / 30) > 0 {
+			orderID = fmt.Sprintf("ORD-2026041%d-%03d", dayOffset/30, orderNum)
+		}
+
+		statuses := []string{"placed", "processing", "shipped", "delivered"}
+		statusIdx := i % 4
+		status := statuses[statusIdx]
+
+		statusClasses := map[string]string{
+			"placed":      "secondary",
+			"processing":  "info",
+			"shipped":     "warning",
+			"delivered":   "success",
+		}
+
+		products := []string{"2ZRWG08", "0PUK6V6EV0", "LS4PSXUNUM", "L9ECAV7KIM", "6E92ZMYYFZ"}
+		productIdx := i % len(products)
+
+		order := orderView{
+			OrderId:                  orderID,
+			CreatedAt:                time.Now().AddDate(0, 0, -dayOffset).Format(time.RFC3339),
+			ShippingStatus:           status,
+			ShippingStatusBadgeClass: statusClasses[status],
+			PaymentStatus:            "completed",
+			PaymentStatusBadgeClass:  "success",
+			PaymentTransactionId:     fmt.Sprintf("TXN-20260410-%03d", orderNum),
+			StatusPlaced:             true,
+			StatusProcessing:         statusIdx >= 1,
+			StatusShipped:            statusIdx >= 2,
+			StatusDelivered:          statusIdx >= 3,
+			TotalCost: &pb.Money{CurrencyCode: "USD", Units: int64(50 + i*5), Nanos: 0},
+			SubtotalCost: &pb.Money{CurrencyCode: "USD", Units: int64(45 + i*5), Nanos: 0},
+			ShippingCost: &pb.Money{CurrencyCode: "USD", Units: 5, Nanos: 0},
 			Items: []orderItemView{
 				{
-					Item: &pb.CartItem{
-						ProductId: "66VCHSJNUP",
-						Quantity:  1,
-					},
-					ProductName: "Vintage Camera",
-					ItemPrice: &pb.Money{
-						CurrencyCode: "USD",
-						Units:        119,
-						Nanos:        950000000,
-					},
-					ItemSubtotal: &pb.Money{
-						CurrencyCode: "USD",
-						Units:        119,
-						Nanos:        950000000,
-					},
+					Item: &pb.CartItem{ProductId: products[productIdx], Quantity: 1},
+					ProductName: fmt.Sprintf("Product %d", i),
+					ItemPrice: &pb.Money{CurrencyCode: "USD", Units: int64(45 + i*5), Nanos: 0},
+					ItemSubtotal: &pb.Money{CurrencyCode: "USD", Units: int64(45 + i*5), Nanos: 0},
 				},
 			},
 			ShippingAddress: &pb.Address{
-				StreetAddress: "456 Oak Ave",
-				City:          "Seattle",
-				State:         "WA",
+				StreetAddress: fmt.Sprintf("%d Test St", 100+i),
+				City:          []string{"New York", "Los Angeles", "Chicago", "Houston", "Phoenix"}[i%5],
+				State:         []string{"NY", "CA", "IL", "TX", "AZ"}[i%5],
 				Country:       "US",
-				ZipCode:       98101,
+				ZipCode:       int32(10000 + i*100),
 			},
-		},
+		}
+		orders = append(orders, order)
 	}
+
 	return orders
 }
 
