@@ -296,3 +296,68 @@ message RemoveFavoriteRequest {
 message ClearFavoritesRequest {
     string user_id = 1;    // Session ID
 }
+
+// ----------Order service (Purchase History)----------
+
+service OrderService {
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {}
+    rpc GetOrder(GetOrderRequest) returns (Order) {}
+    rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {}
+    rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (Empty) {}
+}
+
+message Order {
+    string order_id = 1;              // Format: ORD-YYYYMMDD-NNN
+    string user_id = 2;               // Session ID
+    string created_at = 3;            // RFC3339 timestamp
+    repeated OrderItem items = 4;
+    Money total_cost = 5;
+    string payment_status = 6;        // placed, completed, failed, refunded
+    string shipping_status = 7;       // placed, processing, shipped, delivered, failed
+    string tracking_id = 8;           // Carrier tracking number
+    Address shipping_address = 9;
+    string payment_transaction_id = 10; // Reference to payment transaction
+    string estimated_delivery_date = 11; // RFC3339 timestamp
+    string shipped_at = 12;           // RFC3339 timestamp when marked shipped
+    string delivered_at = 13;         // RFC3339 timestamp when marked delivered
+}
+
+message CreateOrderRequest {
+    string user_id = 1;               // Session ID
+    repeated OrderItem items = 2;
+    Money total_cost = 3;
+    Address shipping_address = 4;
+    string payment_transaction_id = 5;
+    string tracking_id = 6;
+}
+
+message CreateOrderResponse {
+    Order order = 1;
+}
+
+message GetOrderRequest {
+    string order_id = 1;
+    string user_id = 2;               // Provided for security check (data isolation)
+}
+
+message ListOrdersRequest {
+    string user_id = 1;               // Session ID
+    int32 page_size = 2;              // Items per page (max 100, default 20)
+    int32 page_offset = 3;            // Pagination offset
+    string status_filter = 4;         // Optional: filter by status (empty = all)
+}
+
+message ListOrdersResponse {
+    repeated Order orders = 1;
+    int32 total_count = 2;
+    int32 page_count = 3;
+}
+
+message UpdateOrderStatusRequest {
+    string order_id = 1;
+    string user_id = 2;               // For data isolation check
+    string new_status = 3;            // shipping_status to update
+    string tracking_id = 4;           // Optional: update tracking ID
+    string shipped_at = 5;            // Optional: timestamp
+    string delivered_at = 6;          // Optional: timestamp
+}
