@@ -26,10 +26,16 @@
     <main role="main" class="wishlist-sections">
 
         {{ if eq (len $.items) 0 }}
-        <section class="empty-wishlist-section">
-            <h3>Your wishlist is empty!</h3>
-            <p>Items you add to your wishlist will appear here.</p>
-            <a class="cymbal-button-primary" href="{{ $.baseUrl }}/" role="button">Continue Shopping</a>
+        <section class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="empty-wishlist-section">
+                        <h3>Your wishlist is empty!</h3>
+                        <p>Items you add to your wishlist will appear here.</p>
+                        <a class="cymbal-button-primary" href="{{ $.baseUrl }}/" role="button">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
         </section>
         {{ else }}
         <section class="container">
