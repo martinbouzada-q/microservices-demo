@@ -2,7 +2,7 @@
 
 ## Tech Stack
 - Go 1.25 (toolchain go1.26.1) — frontend, checkoutservice, productcatalogservice, shippingservice
-- C# / .NET 10.0 — cartservice
+- C# / .NET 10.0 — cartservice, favoritesservice
 - Java 21 / Gradle — adservice
 - Node.js — currencyservice, paymentservice
 - Python 3.x — emailservice, recommendationservice, shoppingassistantservice, loadgenerator
@@ -24,6 +24,9 @@
 | C# gRPC service | `src/cartservice/src/services/` | `src/cartservice/src/services/CartService.cs` |
 | C# cart store implementations | `src/cartservice/src/cartstore/` | `src/cartservice/src/cartstore/RedisCartStore.cs` |
 | C# tests | `src/cartservice/tests/` | `src/cartservice/tests/CartServiceTests.cs` |
+| C# favorites service | `src/favoritesservice/` | `src/favoritesservice/Services/FavoritesService.cs` |
+| C# favorites store | `src/favoritesservice/Stores/` | `src/favoritesservice/Stores/RedisStore.cs` |
+| C# favorites tests | `src/favoritesservice/Tests/` | `src/favoritesservice/Tests/FavoritesServiceTests.cs` |
 | Java gRPC service | `src/adservice/src/main/java/hipstershop/` | `src/adservice/src/main/java/hipstershop/AdService.java` |
 | Proto definitions | `src/<service>/src/main/proto/` or duplicated per service | `src/adservice/src/main/proto/demo.proto` |
 | Python gRPC server | `src/<service>/` | `src/emailservice/email_server.py` |
@@ -40,6 +43,7 @@
 | Build & deploy to staging | `skaffold run --default-repo=us-docker.pkg.dev/$PROJECT_ID/...` |
 | Run Go tests | `cd src/<service> && go test ./...` |
 | Run C# tests | `dotnet test src/cartservice/` |
+| Run FavoritesService tests | `dotnet test src/favoritesservice/Tests/` |
 | Run load generator | `cd src/loadgenerator && locust` |
 | Validate Terraform | `terraform validate terraform/` |
 | Build Helm chart | `helm lint helm-chart/` |
@@ -69,7 +73,8 @@ Microservices BFF (Backend-for-Frontend). The `frontend` service is the sole HTT
 | `RECOMMENDATION_SERVICE_ADDR` | frontend | Recommendations gRPC address |
 | `AD_SERVICE_ADDR` | frontend | Ads gRPC address |
 | `SHOPPING_ASSISTANT_SERVICE_ADDR` | frontend | AI assistant address |
-| `REDIS_ADDR` | cartservice | Redis connection string |
+| `FAVORITES_SERVICE_ADDR` | frontend | Wishlist/FavoritesService gRPC address |
+| `REDIS_ADDR` | cartservice, favoritesservice | Redis connection string |
 | `COLLECTOR_SERVICE_ADDR` | all | OTel Collector OTLP endpoint |
 | `ENABLE_TRACING` | all | Activate OTel trace export |
 | `ENABLE_PROFILER` | Go/Node services | Activate Cloud Profiler |
