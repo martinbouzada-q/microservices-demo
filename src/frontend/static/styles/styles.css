@@ -838,3 +838,8 @@ the rules below could be extracted.
     width: 100%;
   }
 }
+/* Wishlist - Empty state */
+.empty-wishlist-section {
+  display: block;
+  text-align: center;
+}
