@@ -882,3 +882,69 @@ the rules below could be extracted.
     font-size: 14px;
   }
 }
+
+/* Wishlist Button Styles (SCRUM-1) */
+.product-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.add-to-cart-form,
+.add-to-wishlist-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-to-wishlist-btn {
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.add-to-wishlist-btn.wishlist-inactive {
+  background-color: #c2c2c2;
+  border-color: #c2c2c2;
+  color: white;
+}
+
+.add-to-wishlist-btn.wishlist-inactive:hover {
+  background-color: #a8a8a8;
+  border-color: #a8a8a8;
+}
+
+.add-to-wishlist-btn.wishlist-active {
+  background-color: #e74c3c;
+  border-color: #e74c3c;
+  color: white;
+}
+
+.add-to-wishlist-btn.wishlist-active:hover {
+  background-color: #c0392b;
+  border-color: #c0392b;
+}
+
+.add-to-wishlist-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.wishlist-badge-updated {
+  animation: badge-pulse 0.3s ease-in-out;
+}
+
+@keyframes badge-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
