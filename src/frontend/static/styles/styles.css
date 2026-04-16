@@ -840,6 +840,42 @@ the rules below could be extracted.
 }
 /* Wishlist - Empty state */
 .empty-wishlist-section {
-  display: block;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  padding: 40px 20px;
+  gap: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.empty-wishlist-section h3 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+  font-weight: 600;
+}
+
+.empty-wishlist-section p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .empty-wishlist-section {
+    min-height: 300px;
+    padding: 20px 10px;
+    gap: 15px;
+  }
+
+  .empty-wishlist-section h3 {
+    font-size: 22px;
+  }
+
+  .empty-wishlist-section p {
+    font-size: 14px;
+  }
 }
