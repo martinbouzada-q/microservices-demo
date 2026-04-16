@@ -76,7 +76,7 @@
             {{ end }}
 
             {{ range $i := seq 1 .PageCount }}
-            {{ if eq $i $.CurrentPage }}
+            {{ if eq $i .CurrentPage }}
             <li class="page-item active">
               <span class="page-link">{{ $i }}</span>
             </li>
@@ -99,7 +99,7 @@
           </ul>
         </nav>
         <p class="text-center text-muted mt-2">
-          Page {{ .CurrentPage }} of {{ .PageCount }} • Showing {{ len .Orders }} of {{ .TotalCount }} orders
+          Page {{ .CurrentPage }} of {{ .PageCount }} • Showing {{ len .orders }} of {{ .TotalCount }} orders
         </p>
         {{ end }}
 
