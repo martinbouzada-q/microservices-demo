@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { BASE_URL } from './config/environments';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -13,7 +14,7 @@ export default defineConfig({
   reporter: 'html',
 
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:8080',
+    baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

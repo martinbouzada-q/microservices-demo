@@ -7,7 +7,12 @@ const path = require('path');
  * Shows current state of add-to-cart UI before implementation
  */
 async function captureBeforeScreenshots() {
-  const baseUrl = process.env.BASE_URL || 'http://localhost:8080';
+  // URL resolved from environment config (see config/environments.ts).
+  // Override with: BASE_URL=https://staging.example.com node capture-before-screenshots.js
+  // Or set TEST_ENV=staging to use a named environment's default.
+  const envDefaults = { local: 'http://localhost:8080', staging: 'https://staging.online-boutique.example.com', production: 'https://online-boutique.example.com' };
+  const testEnv = process.env.TEST_ENV || 'local';
+  const baseUrl = process.env.BASE_URL || envDefaults[testEnv] || 'http://localhost:8080';
   const screenshotDir = path.join(__dirname, '../.claude/artifacts/SCRUM-5/screenshots/before');
 
   if (!fs.existsSync(screenshotDir)) {

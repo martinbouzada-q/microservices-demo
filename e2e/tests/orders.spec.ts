@@ -15,8 +15,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-
-const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+import { BASE_URL as baseUrl } from '../config/environments';
 
 test.describe('Purchase History / Order History (SCRUM-2)', () => {
   test.describe('Scenario 1: User views order history list', () => {
