@@ -33,6 +33,5 @@ qubika-agentic-framework/
 
 # Skaffold binary (use system-installed skaffold instead)
 skaffold
-.claude/worktrees/epic-haibt
-.claude/worktrees/hopeful-payne
+.claude/worktrees/*
 src/frontend/frontend
