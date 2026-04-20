@@ -33,5 +33,5 @@ qubika-agentic-framework/
 
 # Skaffold binary (use system-installed skaffold instead)
 skaffold
-.claude/worktrees/*
+.claude/worktrees*
 src/frontend/frontend
