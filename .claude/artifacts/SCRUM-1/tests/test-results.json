@@ -1,0 +1,39 @@
+{
+  "ticketId": "SCRUM-1",
+  "executedAt": "2026-04-16T18:10:00-03:00",
+  "summary": {
+    "overall": { "status": "passed", "total": 13, "passed": 13, "failed": 0, "skipped": 0 }
+  },
+  "unit": {
+    "framework": "xUnit",
+    "project": "src/favoritesservice/Tests/FavoritesServiceTests.csproj",
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "durationMs": 509,
+    "tests": [
+      { "name": "AddFavorite_WithValidInput_CallsStore", "status": "passed", "durationMs": 0 },
+      { "name": "AddFavorite_WithEmptyUserId_ThrowsException", "status": "passed", "durationMs": 0 },
+      { "name": "AddFavorite_WithEmptyProductId_ThrowsException", "status": "passed", "durationMs": 2 },
+      { "name": "AddFavorite_WhenStoreThrows_ReturnsInternalError", "status": "passed", "durationMs": 1 },
+      { "name": "GetFavorites_WithValidInput_ReturnsFavorites", "status": "passed", "durationMs": 1 },
+      { "name": "GetFavorites_WithEmptyUserId_ThrowsException", "status": "passed", "durationMs": 0 },
+      { "name": "GetFavorites_WithEmptyWishlist_ReturnsEmptyList", "status": "passed", "durationMs": 11 },
+      { "name": "GetFavorites_WhenStoreThrows_ReturnsInternalError", "status": "passed", "durationMs": 0 },
+      { "name": "RemoveFavorite_WithValidInput_CallsStore", "status": "passed", "durationMs": 0 },
+      { "name": "RemoveFavorite_WithEmptyUserId_ThrowsException", "status": "passed", "durationMs": 0 },
+      { "name": "RemoveFavorite_WithEmptyProductId_ThrowsException", "status": "passed", "durationMs": 0 },
+      { "name": "ClearFavorites_WithValidInput_CallsStore", "status": "passed", "durationMs": 39 },
+      { "name": "ClearFavorites_WithEmptyUserId_ThrowsException", "status": "passed", "durationMs": 0 }
+    ]
+  },
+  "go": {
+    "framework": "go test",
+    "packages": [
+      { "name": "frontend/money", "status": "ok", "durationMs": 1304 },
+      { "name": "frontend/validator", "status": "ok", "durationMs": 914 }
+    ]
+  },
+  "integration": { "status": "pending", "reason": "Requires Redis + FavoritesService running" },
+  "e2e": { "status": "committed", "commit": "43659273", "framework": "playwright", "scenarios": 10 }
+}
