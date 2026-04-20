@@ -30,3 +30,6 @@ vendor/
 .claude-temp/
 .claude-backups/
 qubika-agentic-framework/
+
+# Skaffold binary (use system-installed skaffold instead)
+skaffold
