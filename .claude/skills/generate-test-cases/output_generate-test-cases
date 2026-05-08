@@ -1,0 +1,88 @@
+⏺ Phase 0: Arguments parsed — Input: SCRUM-29 (Jira), Output: DEMO (Qase), Language: English, Format: classic.
+
+  Phase 1: Fetching ticket from Jira...
+
+⏺ ✓ Loaded: SCRUM-29 — QA - Conversión de moneda multi-divisa
+    Source: Jira (Story) | Language output: English
+    Services: frontend (setCurrencyHandler), currencyservice (GetSupportedCurrencies, Convert)
+    Checklist items found: 15
+    Groups identified: Currency Selector, Price Conversion, Correctness & Edge Cases
+
+  Phase 2: Analyzing content and generating test cases...
+
+  Coverage check:
+  - ✅ Happy path (select currency → prices update)
+  - ✅ Persistence (cookie between navigations)
+  - ✅ All 7 surfaces where prices appear
+  - ✅ Format correctness (units/nanos, ISO 4217)
+  - ✅ No-op optimization
+  - ✅ Whitelist filtering
+  - ✅ Service failure (graceful degradation — added)
+  - ✅ Browser refresh persistence — added
+
+  17 test cases ready. Phase 3: Creating Qase suite and publishing...
+
+  Called qase 2 times (ctrl+o to expand)
+
+⏺ ✅ Created 17 test cases in Qase
+     Project: DEMO
+     Suite: "SCRUM-29 - Multi-Currency Conversion" (ID: 6)
+     Cases created: 34–50
+
+  ---
+  Here's the full breakdown of what was generated:
+
+  Group 1 — Currency Selector (4 cases)
+
+  ┌─────┬──────────────────────────────────────────────────────────────┬──────────┐
+  │ ID  │                            Title                             │ Priority │
+  ├─────┼──────────────────────────────────────────────────────────────┼──────────┤
+  │ 34  │ Currency | Selector displays all available currencies        │ High     │
+  ├─────┼──────────────────────────────────────────────────────────────┼──────────┤
+  │ 35  │ Currency | Default currency (USD) loads on first visit       │ High     │
+  ├─────┼──────────────────────────────────────────────────────────────┼──────────┤
+  │ 36  │ Currency | Selected currency logo displays in header         │ Medium   │
+  ├─────┼──────────────────────────────────────────────────────────────┼──────────┤
+  │ 37  │ Currency | Selection persists via cookie between navigations │ High     │
+  └─────┴──────────────────────────────────────────────────────────────┴──────────┘
+
+  Group 2 — Price Conversion (7 cases)
+
+  ┌─────┬───────────────────────────────────────────────────────────────────┬──────────┐
+  │ ID  │                               Title                               │ Priority │
+  ├─────┼───────────────────────────────────────────────────────────────────┼──────────┤
+  │ 38  │ Currency | Home page prices update when currency changes          │ High     │
+  ├─────┼───────────────────────────────────────────────────────────────────┼──────────┤
+  │ 39  │ Currency | Product detail page prices update                      │ High     │
+  ├─────┼───────────────────────────────────────────────────────────────────┼──────────┤
+  │ 40  │ Currency | Cart prices and totals update                          │ High     │
+  ├─────┼───────────────────────────────────────────────────────────────────┼──────────┤
+  │ 41  │ Currency | Shipping cost converts correctly                       │ Medium   │
+  ├─────┼───────────────────────────────────────────────────────────────────┼──────────┤
+  │ 42  │ Currency | Wishlist item prices update                            │ Medium   │
+  ├─────┼───────────────────────────────────────────────────────────────────┼──────────┤
+  │ 43  │ Currency | Order confirmation totals display in selected currency │ High     │
+  ├─────┼───────────────────────────────────────────────────────────────────┼──────────┤
+  │ 44  │ Currency | Recommendation section prices update                   │ Medium   │
+  └─────┴───────────────────────────────────────────────────────────────────┴──────────┘
+
+  Group 3 — Correctness & Edge Cases (6 cases)
+
+  ┌─────┬───────────────────────────────────────────────────────────────┬──────────┐
+  │ ID  │                             Title                             │ Priority │
+  ├─────┼───────────────────────────────────────────────────────────────┼──────────┤
+  │ 45  │ Currency | Price format is correct per currency (units/nanos) │ High     │
+  ├─────┼───────────────────────────────────────────────────────────────┼──────────┤
+  │ 46  │ Currency | Currency codes follow ISO 4217 standard            │ Medium   │
+  ├─────┼───────────────────────────────────────────────────────────────┼──────────┤
+  │ 47  │ Currency | No-op optimization when same currency re-selected  │ Medium   │
+  ├─────┼───────────────────────────────────────────────────────────────┼──────────┤
+  │ 48  │ Currency | Whitelist filtering excludes unlisted currencies   │ Medium   │
+  ├─────┼───────────────────────────────────────────────────────────────┼──────────┤
+  │ 49  │ Currency | CurrencyService failure handled gracefully         │ High     │
+  ├─────┼───────────────────────────────────────────────────────────────┼──────────┤
+  │ 50  │ Currency | Selection persists after browser refresh           │ High     │
+  └─────┴───────────────────────────────────────────────────────────────┴──────────┘
+
+  Each case includes: preconditions, numbered steps with expected results, and postconditions. The 7 High priority cases cover the critical path — if any of them fail, the currency feature is broken for all
+  users.

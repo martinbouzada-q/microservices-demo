@@ -399,10 +399,21 @@ if (validation.invest.small.estimatedDays > 5) {
    - Add Then clauses for complete validation
    - Ensure error messages specified
 
+4. **Naming convention (MANDATORY)**:
+   - All scenario/test case titles MUST follow the format: `feature | test case title`
+   - `feature` = the feature or module name derived from the ticket title (e.g., "Wishlist", "Authentication", "Checkout")
+   - `test case title` = a concise, action-oriented description of the scenario
+   - Examples:
+     - `Wishlist | User successfully adds a product to wishlist`
+     - `Wishlist | Wishlist clears when session expires`
+     - `Authentication | User logs in with valid credentials`
+     - `Checkout | Order fails when payment service is unavailable`
+   - This format ensures traceability in test management tools (e.g., Qase) and makes the feature scope immediately visible
+
 **Scenario Template**:
 
 ```gherkin
-Scenario: [Clear, specific scenario name]
+Scenario: [feature] | [Clear, specific scenario name]
   Given [initial context/state]
   And [additional context if needed]
   When [action/trigger]
@@ -414,7 +425,7 @@ Scenario: [Clear, specific scenario name]
 **Example**:
 
 ```gherkin
-Scenario: User successfully resets forgotten password
+Scenario: Authentication | User successfully resets forgotten password
   Given I am on the login page
   And I click "Forgot Password"
   And I enter email "user@example.com" that exists in the system

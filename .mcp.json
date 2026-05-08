@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "qase": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@qase/mcp-server"
+      ],
+      "env": {
+        "QASE_API_TOKEN": "7cd7f364b328e0c3c4b6d8d1a7b6db3bd730f2211cfb8bd95aaa1b497827f68b"
+      }
+    }
+  }
+}

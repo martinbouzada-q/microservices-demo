@@ -39,7 +39,20 @@
       "Bash(awk '{print $6, $7, $8, $9, $10}')",
       "Bash(xargs cat *)",
       "mcp__claude_ai_Atlassian__getJiraIssue",
-      "Bash(git -C /Users/martin-bouzada/qaf/microservices-demo log --oneline)"
+      "Bash(git -C /Users/martin-bouzada/qaf/microservices-demo log --oneline)",
+      "Skill(update-config)",
+      "mcp__qase__create_defect",
+      "Bash(npx playwright *)",
+      "mcp__qase__create_plan",
+      "mcp__qase__create_run",
+      "mcp__qase__create_results_bulk",
+      "mcp__qase__complete_run",
+      "mcp__qase__create_suite",
+      "Skill(skill-creator)",
+      "mcp__qase__bulk_create_cases"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "qase"
+  ]
 }

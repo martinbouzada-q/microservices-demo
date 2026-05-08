@@ -1,5 +1,7 @@
-export { BasePage } from './BasePage';
-export { ProductPage } from './ProductPage';
-export { WishlistPage } from './WishlistPage';
-export { HomePage } from './HomePage';
-export { CartPage } from './CartPage';
+export { BasePage } from './base.page';
+export { HomePage } from './home.page';
+export { ProductPage } from './product.page';
+export { CartPage } from './cart.page';
+export { WishlistPage } from './wishlist.page';
+export { OrdersPage } from './orders.page';
+export { OrderDetailPage } from './order-detail.page';

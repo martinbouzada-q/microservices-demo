@@ -1,41 +1,32 @@
 import { defineConfig, devices } from '@playwright/test';
-import { BASE_URL } from './config/environments';
+import { baseURL } from './config/urls';
+import { env } from './config/env';
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
 export default defineConfig({
-  testDir: './tests',
+  testDir: './specs',
+  testMatch: '**/*.e2e.spec.ts',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: env.CI,
+  retries: env.CI ? 2 : 0,
+  workers: env.CI ? 1 : undefined,
 
-  reporter: 'html',
+  reporter: env.CI
+    ? [['list'], ['html', { open: 'never' }], ['junit', { outputFile: 'test-results/junit.xml' }]]
+    : [['list'], ['html', { open: 'never' }]],
 
   use: {
-    baseURL: BASE_URL,
-    trace: 'on-first-retry',
+    baseURL,
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
 
   projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit',   use: { ...devices['Desktop Safari'] } },
   ],
 
-  // Note: webServer is not configured because the app runs on Kubernetes
-  // Make sure to run: kubectl port-forward deployment/frontend 8080:8080
-  // before running tests
+  // App runs on Kubernetes — start it externally before invoking tests:
+  //   kubectl port-forward deployment/frontend 8080:8080
 });

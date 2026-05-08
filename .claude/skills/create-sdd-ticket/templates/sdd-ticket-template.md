@@ -40,21 +40,49 @@ Then [expected outcome]
 And [additional outcome if needed]
 ```
 
-### Scenario 2: [Edge Case 1]
+### Scenario 2: [Negative Case]
 ```gherkin
 Given [context]
 When [action]
 Then [outcome]
 ```
 
-### Scenario 3: [Error Case]
+### Scenario 3: [Field validation]
 ```gherkin
 Given [context]
 When [action]
 Then [outcome]
 ```
 
-### Scenario 4: [Additional scenario if needed]
+### Scenario 4: [User Interface]
+```gherkin
+Given [context]
+When [action]
+Then [outcome]
+```
+
+### Scenario 5: [Usability]
+```gherkin
+Given [context]
+When [action]
+Then [outcome]
+```
+
+### Scenario 6: [Data Handling]
+```gherkin
+Given [context]
+When [action]
+Then [outcome]
+```
+
+### Scenario 7: [Error Handling]
+```gherkin
+Given [context]
+When [action]
+Then [outcome]
+```
+
+### Scenario 8: [Additional scenario if needed]
 ```gherkin
 Given [context]
 When [action]
